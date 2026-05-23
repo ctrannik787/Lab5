@@ -1,0 +1,19 @@
+body {
+    min-height: 100vh;
+}
+
+.narrow-form {
+    max-width: 640px;
+}
+
+.details-table {
+    max-width: 720px;
+}
+
+.details-table th {
+    width: 220px;
+}
+
+.actions-cell {
+    min-width: 320px;
+}

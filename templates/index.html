@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Список пользователей{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Список пользователей</h1>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped align-middle">
+        <thead>
+        <tr>
+            <th>№</th>
+            <th>ФИО</th>
+            <th>Роль</th>
+            <th class="text-end">Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ user.full_name }}</td>
+                <td>{{ user.role.name if user.role else "Без роли" }}</td>
+                <td class="text-end actions-cell">
+                    {% if current_user.is_authenticated and can_view_user(current_user, user) %}
+                        <a class="btn btn-sm btn-outline-primary" href="{{ url_for('main.view_user', user_id=user.id) }}">Просмотр</a>
+                    {% endif %}
+                    {% if can_edit_user(current_user, user) %}
+                        <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('main.edit_user', user_id=user.id) }}">Редактирование</a>
+                    {% endif %}
+                    {% if can_delete_user(current_user) %}
+                        <button class="btn btn-sm btn-outline-danger" type="button" data-bs-toggle="modal" data-bs-target="#deleteUser{{ user.id }}">Удаление</button>
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4" class="text-center text-muted">Пользователи не найдены.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if can_create_user(current_user) %}
+    <a class="btn btn-primary" href="{{ url_for('main.create_user') }}">Создание пользователя</a>
+{% endif %}
+
+{% for user in users %}
+    {% if can_delete_user(current_user) %}
+        <div class="modal fade" id="deleteUser{{ user.id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title fs-5">Удаление пользователя</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        Вы уверены, что хотите удалить пользователя {{ user.full_name }}?
+                    </div>
+                    <div class="modal-footer">
+                        <form method="post" action="{{ url_for('main.delete_user', user_id=user.id) }}">
+                            <button class="btn btn-danger" type="submit">Да</button>
+                        </form>
+                        <button class="btn btn-outline-secondary" type="button" data-bs-dismiss="modal">Нет</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endfor %}
+{% endblock %}

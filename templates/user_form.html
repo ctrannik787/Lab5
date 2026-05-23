@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% from "macros/forms.html" import user_form %}
+
+{% block title %}{{ "Создание пользователя" if mode == "create" else "Редактирование пользователя" }}{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-3">{{ "Создание пользователя" if mode == "create" else "Редактирование пользователя" }}</h1>
+<form method="post" class="narrow-form">
+    {{ user_form(mode, data, errors, roles, allow_role|default(True)) }}
+</form>
+{% endblock %}

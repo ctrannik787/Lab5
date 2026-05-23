@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Отчёт по пользователям{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-3">Отчёт по пользователям</h1>
+<div class="table-responsive">
+    <table class="table table-striped align-middle">
+        <thead>
+        <tr><th>№</th><th>Пользователь</th><th>Количество посещений</th></tr>
+        </thead>
+        <tbody>
+        {% for row in rows %}
+            <tr><td>{{ loop.index }}</td><td>{{ visitor_name(row[0]) }}</td><td>{{ row.visits_count }}</td></tr>
+        {% else %}
+            <tr><td colspan="3" class="text-center text-muted">Данные отсутствуют.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+<a class="btn btn-primary" href="{{ url_for('reports.users_csv') }}">Экспорт в CSV</a>
+<a class="btn btn-outline-secondary" href="{{ url_for('reports.visits') }}">Назад</a>
+{% endblock %}

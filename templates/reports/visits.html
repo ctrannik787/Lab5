@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Журнал посещений{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between gap-2 align-items-center mb-3">
+    <h1 class="h3 mb-0">Журнал посещений</h1>
+    <div class="btn-group">
+        <a class="btn btn-outline-primary" href="{{ url_for('reports.pages_report') }}">Отчёт по страницам</a>
+        <a class="btn btn-outline-primary" href="{{ url_for('reports.users_report') }}">Отчёт по пользователям</a>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped align-middle">
+        <thead>
+        <tr>
+            <th>№</th>
+            <th>Пользователь</th>
+            <th>Страница</th>
+            <th>Дата</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for log in logs %}
+            <tr>
+                <td>{{ (pagination.page - 1) * pagination.per_page + loop.index }}</td>
+                <td>{{ log.user.full_name if log.user else "Неаутентифицированный пользователь" }}</td>
+                <td>{{ log.path }}</td>
+                <td>{{ log.created_at.strftime("%d.%m.%Y %H:%M:%S") }}</td>
+            </tr>
+        {% else %}
+            <tr><td colspan="4" class="text-center text-muted">Записи отсутствуют.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if pagination.pages > 1 %}
+    <nav>
+        <ul class="pagination">
+            {% for page in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                {% if page %}
+                    <li class="page-item {% if page == pagination.page %}active{% endif %}">
+                        <a class="page-link" href="{{ url_for('reports.visits', page=page) }}">{{ page }}</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </nav>
+{% endif %}
+{% endblock %}
